@@ -9,10 +9,10 @@ class AppDrawer extends StatelessWidget {
         children: <Widget>[
           DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: const Color.fromARGB(255, 20, 20, 20),
             ),
             child: Text(
-              'Drawer Header',
+              'Mobile Restaurant',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,
@@ -59,6 +59,12 @@ class AppDrawer extends StatelessWidget {
             title: Text('Users'),
             onTap: () {
               Navigator.popAndPushNamed(context, '/users');
+            },
+          ),
+          ListTile(
+            title: Text('Login'),
+            onTap: () {
+              Navigator.popAndPushNamed(context, '/Login');
             },
           ),
           ListTile(

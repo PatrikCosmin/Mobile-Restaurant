@@ -1,22 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_restaurant/screens/home_screen.dart';
-import 'package:flutter_restaurant/screens/menu_screen.dart';
-import 'package:flutter_restaurant/screens/reservation_screen.dart';
-import 'package:flutter_restaurant/screens/about_screen.dart';
-import 'package:flutter_restaurant/screens/contact_screen.dart';
-import 'package:flutter_restaurant/screens/feedback_screen.dart';
-import 'package:flutter_restaurant/screens/users_screen.dart';
-import 'package:flutter_restaurant/screens/login_screen.dart';
-import 'package:flutter_restaurant/screens/register_screen.dart';
-import 'package:flutter_restaurant/screens/edit_menu_item_screen.dart';
-import 'package:flutter_restaurant/screens/edit_reservation_screen.dart';
-import 'package:flutter_restaurant/screens/edit_user_screen.dart';
-import 'package:flutter_restaurant/screens/edit_feedback_screen.dart';
-// import 'package:flutter_restaurant/widgets/drawer.dart'; // Ensure you are importing your custom drawer if needed
-
-void main() {
-  runApp(MyApp());
-}
+import 'package:provider/provider.dart';
+import 'services/auth_service.dart'; // Make sure this path is correct based on your project structure
 
 class MyApp extends StatelessWidget {
   @override
@@ -29,22 +13,42 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/home',
       routes: {
-        '/': (context) => HomeScreen(),  // Consider using HomeScreen directly if BaseScreen is not adding value
         '/home': (context) => HomeScreen(),
         '/menu': (context) => MenuScreen(),
-        '/reservation': (context) => ReservationScreen(),
         '/about': (context) => AboutScreen(),
         '/contact': (context) => ContactScreen(),
         '/feedback': (context) => FeedbackScreen(),
         '/users': (context) => UsersScreen(),
         '/login': (context) => LoginScreen(),
         '/register': (context) => RegisterScreen(),
-        '/edit_menu_item': (context) => EditMenuItemScreen(),
-        '/edit_reservation': (context) => EditReservationScreen(),
-        '/edit_user': (context) => EditUserScreen(),
-        '/edit_feedback': (context) => EditFeedbackScreen(),
-        // Add other routes as needed
       },
+      home: Consumer<UserProvider>(
+        builder: (context, userProvider, child) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Flutter Restaurant'),
+              actions: <Widget>[
+                userProvider.user.isLoggedIn
+                    ? IconButton(
+                        icon: Icon(Icons.exit_to_app),
+                        onPressed: () {
+                          Provider.of<UserProvider>(context, listen: false).logout();
+                          Navigator.of(context).pushReplacementNamed('/login');
+                        },
+                      )
+                    : IconButton(
+                        icon: Icon(Icons.login),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed('/login');
+                        },
+                      ),
+              ],
+            ),
+            body: child,
+          );
+        },
+        child: HomeScreen(), // This is the default screen that shows when the app loads
+      ),
     );
   }
 }
