@@ -9,9 +9,6 @@ import 'package:flutter_restaurant/screens/feedback_screen.dart';
 import 'package:flutter_restaurant/screens/users_screen.dart';
 import 'package:flutter_restaurant/screens/login_screen.dart';
 import 'package:flutter_restaurant/screens/register_screen.dart';
-import 'package:flutter_restaurant/screens/edit_menu_item_screen.dart';
-import 'package:flutter_restaurant/screens/edit_user_screen.dart';
-import 'package:flutter_restaurant/screens/edit_feedback_screen.dart';
 import 'package:flutter_restaurant/services/auth_service.dart'; // Make sure this path is correct
 
 void main() {
@@ -37,12 +34,9 @@ class MyApp extends StatelessWidget {
           '/contact': (context) => ContactScreen(),
           '/feedback': (context) => FeedbackScreen(),
           '/reservation': (context) => ReservationScreen(),
-          '/users': (context) => UsersScreen(),
+          '/users': (context) => UserManagementScreen(),
           '/login': (context) => LoginScreen(),
-          '/register': (context) => RegisterScreen(),
-          '/edit_menu_item': (context) => EditMenuItemScreen(),
-          '/edit_user': (context) => EditUserScreen(),
-          '/edit_feedback': (context) => EditFeedbackScreen(),
+          '/register': (context) => RegistrationScreen(),
           // Ensure to add the '/reservation' route if it's a part of your app
         },
       ),

@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_restaurant/services/auth_service.dart';
+import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
 class MenuScreen extends StatefulWidget {
@@ -8,9 +10,11 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  final String baseURL = 'http://10.0.2.2:5000'; // Adjust this as necessary
+  final String baseURL = 'http://10.0.2.2:5000';
   List<dynamic> menuItems = [];
   List<String> categories = [];
+  String newCategory = '';
+  bool isAdmin = false;
 
   @override
   void initState() {
@@ -35,9 +39,18 @@ class _MenuScreenState extends State<MenuScreen> {
 
   @override
   Widget build(BuildContext context) {
+    isAdmin = Provider.of<UserProvider>(context).user.isAdmin;
     return Scaffold(
       appBar: AppBar(
         title: Text('Menu'),
+        actions: isAdmin
+            ? [
+                IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () => showAddMenuItemDialog(),
+                )
+              ]
+            : null,
       ),
       body: ListView(
         children: categories.map((category) => buildCategory(category)).toList(),
@@ -63,6 +76,12 @@ class _MenuScreenState extends State<MenuScreen> {
                     title: Text(item['name']),
                     subtitle: Text('\$${item['price']}'),
                     onTap: () => showProductDetailsDialog(item),
+                    trailing: isAdmin
+                        ? IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () => deleteMenuItem(item['id']),
+                          )
+                        : null,
                   ))
               .toList(),
         ),
@@ -86,9 +105,17 @@ class _MenuScreenState extends State<MenuScreen> {
                 ),
                 Text(item['name'], style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 Text(item['description'], style: TextStyle(fontSize: 18)),
-                Text('\$${item['price']}', style: TextStyle(fontSize: 18, color: Colors.green)),
+                Text('\$${item['price']}', style: TextStyle(fontSize: 18, color: const Color.fromARGB(255, 54, 54, 54))),
                 ElevatedButton(
                   onPressed: () => Navigator.of(context).pop(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                      side: BorderSide(color: Colors.black),
+                    ),
+                  ),
                   child: Text('Close'),
                 )
               ],
@@ -97,5 +124,158 @@ class _MenuScreenState extends State<MenuScreen> {
         );
       },
     );
+  }
+
+  void showAddMenuItemDialog() {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  TextEditingController priceController = TextEditingController();
+  TextEditingController categoryController = TextEditingController();
+  TextEditingController imageController = TextEditingController();
+  String? selectedCategory;
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        child: SingleChildScrollView(
+          child: StatefulBuilder(
+            builder: (BuildContext context, setState) {
+              return Container(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Add New Menu Item',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 20),
+                    TextFormField(
+                      controller: nameController,
+                      decoration: InputDecoration(labelText: 'Name'),
+                    ),
+                    TextFormField(
+                      controller: descriptionController,
+                      decoration: InputDecoration(labelText: 'Description'),
+                    ),
+                    TextFormField(
+                      controller: priceController,
+                      decoration: InputDecoration(labelText: 'Price'),
+                      keyboardType: TextInputType.number,
+                    ),
+                    DropdownButtonFormField<String>(
+                      value: selectedCategory,
+                      hint: Text('Select Category'),
+                      items: categories.map((String category) {
+                        return DropdownMenuItem<String>(
+                          value: category,
+                          child: Text(category),
+                        );
+                      }).toList()
+                        ..add(DropdownMenuItem<String>(
+                          value: 'Other',
+                          child: Text('New Category'),
+                        )),
+                      onChanged: (String? value) {
+                        setState(() {
+                          selectedCategory = value;
+                        });
+                      },
+                    ),
+                    if (selectedCategory == 'Other')
+                      TextFormField(
+                        controller: categoryController,
+                        decoration: InputDecoration(labelText: 'New Category'),
+                      ),
+                    TextFormField(
+                      controller: imageController,
+                      decoration: InputDecoration(labelText: 'Image URL'),
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('Cancel'),
+                        ),
+                        SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Validate and save the input data
+                            String name = nameController.text.trim();
+                            String description = descriptionController.text.trim();
+                            double price = double.tryParse(priceController.text.trim()) ?? 0.0;
+                            String category = selectedCategory == 'Other' ? categoryController.text.trim() : selectedCategory!;
+                            String image = imageController.text.trim();
+
+                            // Call a function to add the new menu item
+                            addMenuItem(name, description, price, category, image);
+
+                            // Close the dialog
+                            Navigator.pop(context);
+                          },
+                          child: Text('Add'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      );
+    },
+  );
+}
+
+
+  void deleteMenuItem(int id) async {
+    try {
+      var response = await http.delete(
+        Uri.parse('$baseURL/api/menu/delete/$id'),
+      );
+
+      if (response.statusCode == 200) {
+        // Menu item deleted successfully
+        fetchMenuItems(); // Refresh the menu items list
+      } else {
+        // Error deleting menu item
+        print('Failed to delete menu item: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      print('Error deleting menu item: $e');
+    }
+  }
+
+  void addMenuItem(String name, String description, double price, String category, String image) async {
+    try {
+      var response = await http.post(
+        Uri.parse('$baseURL/api/menu/add'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          'name': name,
+          'description': description,
+          'price': price,
+          'category': category,
+          'image': image,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        // Menu item added successfully
+        fetchMenuItems(); // Refresh the menu items list
+      } else {
+        // Error adding menu item
+        print('Failed to add menu item: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      print('Error adding menu item: $e');
+    }
   }
 }

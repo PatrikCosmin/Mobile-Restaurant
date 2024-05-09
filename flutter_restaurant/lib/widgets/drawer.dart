@@ -9,6 +9,7 @@ class AppDrawer extends StatelessWidget {
       child: Consumer<UserProvider>(
         builder: (context, userProvider, child) {
           final isLoggedIn = userProvider.user.isLoggedIn;
+          final isAdmin = userProvider.user.isAdmin;
           return ListView(
             padding: EdgeInsets.zero,
             children: <Widget>[
@@ -25,54 +26,63 @@ class AppDrawer extends StatelessWidget {
                 ),
               ),
               ListTile(
+                leading: Icon(Icons.home),
                 title: Text('Home'),
                 onTap: () {
                   Navigator.popAndPushNamed(context, '/home');
                 },
               ),
               ListTile(
+                leading: Icon(Icons.restaurant_menu),
                 title: Text('Menu'),
                 onTap: () {
                   Navigator.popAndPushNamed(context, '/menu');
                 },
               ),
               ListTile(
+                leading: Icon(Icons.event),
                 title: Text('Reservation'),
                 onTap: () {
                   Navigator.popAndPushNamed(context, '/reservation');
                 },
               ),
               ListTile(
+                leading: Icon(Icons.info),
                 title: Text('About'),
                 onTap: () {
                   Navigator.popAndPushNamed(context, '/about');
                 },
               ),
               ListTile(
+                leading: Icon(Icons.contacts),
                 title: Text('Contact'),
                 onTap: () {
                   Navigator.popAndPushNamed(context, '/contact');
                 },
               ),
-              ListTile(
+              if (isLoggedIn && isAdmin) ListTile(
+                leading: Icon(Icons.feedback),
                 title: Text('Feedback'),
                 onTap: () {
                   Navigator.popAndPushNamed(context, '/feedback');
                 },
               ),
-              if (isLoggedIn) ListTile(
+              if (isLoggedIn && isAdmin) ListTile(
+                leading: Icon(Icons.supervised_user_circle),
                 title: Text('Users'),
                 onTap: () {
                   Navigator.popAndPushNamed(context, '/users');
                 },
               ),
               if (!isLoggedIn) ListTile(
+                leading: Icon(Icons.login),
                 title: Text('Login'),
                 onTap: () {
                   Navigator.popAndPushNamed(context, '/login');
                 },
               ),
               if (isLoggedIn) ListTile(
+                leading: Icon(Icons.logout),
                 title: Text('Logout'),
                 onTap: () => _confirmLogout(context),
               ),
@@ -95,14 +105,14 @@ class AppDrawer extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop();  // Dismiss the dialog but do not logout
               },
-              child: Text('No'),
+              child: Text('No', style: TextStyle(color: Colors.black)), // Set text color to black
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();  // Dismiss the dialog
                 _logout(context);  // Proceed with logout
               },
-              child: Text('Yes'),
+              child: Text('Yes', style: TextStyle(color: Colors.black)), // Set text color to black
             ),
           ],
         );

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_restaurant/services/auth_service.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:flutter_restaurant/services/auth_service.dart';  // Ensure this is correctly pointing to your UserProvider
+import 'package:flutter_restaurant/screens/register_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
@@ -42,8 +43,15 @@ class LoginScreen extends StatelessWidget {
                     filled: true,
                     fillColor: Colors.white.withOpacity(0.8),
                     labelText: 'Username',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
+                    labelStyle: TextStyle(color: Colors.black), // Set label color
                   ),
+                  cursorColor: Colors.black, // Set cursor color
                 ),
                 SizedBox(height: 12),
                 TextFormField(
@@ -53,13 +61,36 @@ class LoginScreen extends StatelessWidget {
                     filled: true,
                     fillColor: Colors.white.withOpacity(0.8),
                     labelText: 'Password',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
+                    labelStyle: TextStyle(color: Colors.black), // Set label color
                   ),
+                  cursorColor: Colors.black, // Set cursor color
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () => _login(context),
                   child: Text('Login'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegistrationScreen()),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: Text('Signup'),
                 ),
               ],
             ),
@@ -71,7 +102,7 @@ class LoginScreen extends StatelessWidget {
 
   void _login(BuildContext context) async {
     var response = await http.post(
-      Uri.parse('http://10.0.2.2:5000/api/login'), // Adjust the IP as necessary
+      Uri.parse('http://10.0.2.2:5000/api/login'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'username': _usernameController.text,
@@ -86,7 +117,7 @@ class LoginScreen extends StatelessWidget {
           data['username'],
           isAdmin: data['isAdmin'] == 1,
         );
-        Navigator.pop(context);  // Assuming you want to pop back to the previous screen
+        Navigator.pop(context); // Assuming you want to pop back to the previous screen
       } else {
         _showDialog(context, 'Login Failed', data['message']);
       }

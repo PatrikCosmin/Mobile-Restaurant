@@ -55,6 +55,17 @@ class _ReservationScreenState extends State<ReservationScreen> {
       initialDate: editReservationId == null ? DateTime.now() : DateTime.parse(editDate),
       firstDate: DateTime.now(),
       lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.dark().copyWith( // Change the theme to dark
+            colorScheme: ColorScheme.dark(
+              primary: Colors.white, // Foreground color
+              onPrimary: Colors.black, // Background color
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) {
       setState(() {
@@ -69,6 +80,17 @@ class _ReservationScreenState extends State<ReservationScreen> {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: editTime ?? TimeOfDay.now(),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.dark().copyWith( // Change the theme to dark
+            colorScheme: ColorScheme.dark(
+              primary: Colors.white, // Foreground color
+              onPrimary: Colors.black, // Background color
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) {
       setState(() {
@@ -156,6 +178,10 @@ class _ReservationScreenState extends State<ReservationScreen> {
               ElevatedButton(
                 onPressed: () => Navigator.pushNamed(context, '/login'),
                 child: Text("Go to Login"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                ),
               ),
             ],
           ),
@@ -174,7 +200,12 @@ class _ReservationScreenState extends State<ReservationScreen> {
               child: AbsorbPointer(
                 child: TextField(
                   controller: dateController,
-                  decoration: InputDecoration(labelText: "Date"),
+                  decoration: InputDecoration(
+                    labelText: "Date",
+                    labelStyle: TextStyle(color: Colors.black),
+                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                    focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                  ),
                 ),
               ),
             ),
@@ -183,18 +214,28 @@ class _ReservationScreenState extends State<ReservationScreen> {
               child: AbsorbPointer(
                 child: TextField(
                   controller: timeController,
-                  decoration: InputDecoration(labelText: "Time"),
+                  decoration: InputDecoration(
+                    labelText: "Time",
+                    labelStyle: TextStyle(color: Colors.black),
+                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                    focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                  ),
                 ),
               ),
             ),
             DropdownButtonFormField<int>(
               value: editGuests,
-              decoration: InputDecoration(labelText: "Number of Guests"),
+              decoration: InputDecoration(
+                labelText: "Number of Guests",
+                labelStyle: TextStyle(color: Colors.black),
+                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+              ),
               items: List<int>.generate(100, (i) => i + 1)
                   .map<DropdownMenuItem<int>>((int value) {
                 return DropdownMenuItem<int>(
                   value: value,
-                  child: Text(value.toString()),
+                  child: Text(value.toString(), style: TextStyle(color: Colors.black)),
                 );
               }).toList(),
               onChanged: (int? newValue) {
@@ -207,6 +248,10 @@ class _ReservationScreenState extends State<ReservationScreen> {
             ElevatedButton(
               onPressed: createOrUpdateReservation,
               child: Text(editReservationId == null ? "Book Table" : "Update Reservation"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+              ),
             ),
             if (reservationSubmitted) Text("Reservation Successful!"),
             ...reservations.map<Widget>((reservation) {
@@ -218,10 +263,12 @@ class _ReservationScreenState extends State<ReservationScreen> {
                     IconButton(
                       icon: Icon(Icons.edit),
                       onPressed: () => startEditReservation(reservation),
+                      color: Colors.black,
                     ),
                     IconButton(
                       icon: Icon(Icons.delete),
                       onPressed: () => deleteReservation(reservation['id']),
+                      color: Colors.black,
                     ),
                   ],
                 ),

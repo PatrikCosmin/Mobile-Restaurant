@@ -34,6 +34,90 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 // Menu items displayed in two columns
+                
+                // Footer with image and about us paragraph
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Add the icon image here
+                          Image.asset(
+                            'lib/img/about-img.jpg',
+                            width: 150, // Adjust width as needed
+                            height: 200, // Adjust height as needed
+                            fit: BoxFit.cover,
+                          ),
+                          SizedBox(width: 20), // Add some spacing
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Lorem ipsum dolor sit amet consectetur adipisicing elit...',
+                                  style: TextStyle(
+                                    color: const Color.fromARGB(255, 0, 0, 0),
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, '/about');
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.black,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18.0),
+                                      side: BorderSide(color: Colors.black),
+                                    ),
+                                  ),
+                                  child: Text('More About Us'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                // Title and "View Menu" button
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Our Favorites',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/menu');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                            side: BorderSide(color: Colors.black),
+                          ),
+                        ),
+                        child: Text('View Menu'),
+                      ),
+                    ],
+                  ),
+                ),
+                // GridView
                 GridView.count(
                   shrinkWrap: true,
                   padding: const EdgeInsets.all(20),
@@ -47,36 +131,6 @@ class HomeScreen extends StatelessWidget {
                     _buildMenuListTile('Juice', '£1'),
                     _buildMenuListTile('Spirits', '£5'),
                   ],
-                ),
-                // Footer with image and about us paragraph
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Lorem ipsum dolor sit amet consectetur adipisicing elit...',
-                        style: TextStyle(
-                          color: const Color.fromARGB(255, 0, 0, 0),
-                          fontSize: 18,
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/about');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18.0),
-                            side: BorderSide(color: Colors.black),
-                          ),
-                        ),
-                        child: Text('More About Us'),
-                      ),
-                    ],
-                  ),
                 ),
               ],
             ),
